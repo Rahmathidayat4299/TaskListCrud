@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TaskList</string>
+    <string name="set_time">set_time</string>
+    <string name="task_title">task_title</string>
+    <string name="enter_task_title">enter_task_title</string>
+    <string name="todo">TODO</string>
+</resources>
