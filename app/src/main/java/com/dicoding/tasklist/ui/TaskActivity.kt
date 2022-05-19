@@ -33,7 +33,7 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
     var finalTime = 0L
 
 
-    private val labels = arrayListOf("Personal", "Business", "Insurance", "Shopping", "Banking")
+    private val labels = arrayListOf("Sawit", "Kelapa", "Mangga", "Durian", "Karet")
 
 
     val db by lazy {
