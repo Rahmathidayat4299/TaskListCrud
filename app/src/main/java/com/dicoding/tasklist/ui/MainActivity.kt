@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,9 +19,6 @@ import com.dicoding.tasklist.db.AppDatabase
 import com.dicoding.tasklist.db.TodoModel
 import com.dicoding.tasklist.viewmodel.TodoViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: TodoViewModel
@@ -44,28 +40,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         initSwipe()
-        viewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
-        viewModel.getListTask(this)?.observe(this, Observer {
-            list.clear()
-            list.addAll(it)
-            adapterList.notifyDataSetChanged()
-        })
-
-//        db.todoDao().getTask().observe(this, Observer {
-//            if (!it.isNullOrEmpty()) {
-//                list.clear()
-//                list.addAll(it)
-//                adapter.notifyDataSetChanged()
-//            } else {
-//                list.clear()
-//                adapter.notifyDataSetChanged()
-//            }
-//        })
+        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+        displayTodo("")
 
 
     }
 
-    fun initSwipe() {
+    private fun initSwipe() {
         val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -81,21 +62,12 @@ class MainActivity : AppCompatActivity() {
                 val position = viewHolder.adapterPosition
                 val task = list[position]
                 if (direction == ItemTouchHelper.LEFT) {
-                    viewModel.deleteTask(this@MainActivity,task)
+                    viewModel.deleteTask(this@MainActivity, task)
                     adapterList.notifyDataSetChanged()
                 } else if (direction == ItemTouchHelper.RIGHT) {
-                    viewModel.deleteTask(this@MainActivity,task)
+                    viewModel.deleteTask(this@MainActivity, task)
                     adapterList.notifyDataSetChanged()
                 }
-//                if (direction == ItemTouchHelper.LEFT) {
-//                    GlobalScope.launch(Dispatchers.IO) {
-//                        db.todoDao().deleteTask(adapterList.getItemId(position))
-//                    }
-//                } else if (direction == ItemTouchHelper.RIGHT) {
-//                    GlobalScope.launch(Dispatchers.IO) {
-//                        db.todoDao().finishTask(adapterList.getItemId(position))
-//                    }
-//                }
 
             }
 
@@ -206,8 +178,9 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun displayTodo(newText: String = "") {
-        db.todoDao().getTask().observe(this, Observer {
+        viewModel.getListTask(this)?.observe(this) {
             if (it.isNotEmpty()) {
                 list.clear()
                 list.addAll(
@@ -217,7 +190,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 adapterList.notifyDataSetChanged()
             }
-        })
+        }
     }
 
     fun openNewTask(view: View) {

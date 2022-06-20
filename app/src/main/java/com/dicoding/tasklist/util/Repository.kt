@@ -12,7 +12,7 @@ class Repository {
     companion object {
         private var appDb: AppDatabase? = null
 
-        private fun initizalizeDb(context: Context): AppDatabase? {
+        private fun initizalizeDb(context: Context): AppDatabase {
             return AppDatabase.getDatabase(context)
         }
 

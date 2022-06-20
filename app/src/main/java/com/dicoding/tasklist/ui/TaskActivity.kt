@@ -9,32 +9,28 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.TimePicker
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.tasklist.R
 import com.dicoding.tasklist.db.AppDatabase
 import com.dicoding.tasklist.db.TodoModel
 import com.dicoding.tasklist.viewmodel.TodoViewModel
 import kotlinx.android.synthetic.main.activity_task.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-//const val DB_NAME = "todo.db"
 
 class TaskActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var getTitle: String
     private lateinit var getCategory: String
     private lateinit var getDescription: String
-    lateinit var myCalendar: Calendar
+    private lateinit var myCalendar: Calendar
 
-    lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
-    lateinit var timeSetListener: TimePickerDialog.OnTimeSetListener
+    private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
+    private lateinit var timeSetListener: TimePickerDialog.OnTimeSetListener
 
-    var finalDate = 0L
-    var finalTime = 0L
+    private var finalDate = 0L
+    private var finalTime = 0L
     private lateinit var viewModel: TodoViewModel
 
 
@@ -60,7 +56,7 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setUpSpinner() {
         val adapter =
-            ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, labels)
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, labels)
 
         labels.sort()
 
@@ -82,6 +78,7 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
                         applicationContext,
                         TodoModel(getTitle, getCategory, getDescription, finalDate, finalTime)
                     )
+                    Toast.makeText(applicationContext, "Data disimpan", Toast.LENGTH_SHORT).show()
 
                 }
             }
@@ -94,28 +91,13 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
         getTitle = titleInpLay.editText?.text.toString()
         getDescription = taskInpLay.editText?.text.toString()
 
-//        GlobalScope.launch(Dispatchers.Main) {
-//            val id = withContext(Dispatchers.IO) {
-//                return@withContext db.todoDao().insertTask(
-//                    TodoModel(
-//                        title,
-//                        description,
-//                        category,
-//                        finalDate,
-//                        finalTime
-//                    )
-//                )
-//            }
-//            finish()
-//        }
-
     }
 
     private fun setTimeListener() {
         myCalendar = Calendar.getInstance()
 
         timeSetListener =
-            TimePickerDialog.OnTimeSetListener() { _: TimePicker, hourOfDay: Int, min: Int ->
+            TimePickerDialog.OnTimeSetListener { _: TimePicker, hourOfDay: Int, min: Int ->
                 myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 myCalendar.set(Calendar.MINUTE, min)
                 updateTime()
@@ -128,6 +110,7 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
         timePickerDialog.show()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun updateTime() {
         //Mon, 5 Jan 2020
         val myformat = "h:mm a"
