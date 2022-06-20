@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.dicoding.tasklist.ui.DB_NAME
+import com.dicoding.tasklist.util.Constan.DB_NAME
 
 @Database(entities = [TodoModel::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

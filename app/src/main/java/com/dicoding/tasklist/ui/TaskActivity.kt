@@ -1,6 +1,7 @@
 package com.dicoding.tasklist.ui
 
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.tasklist.R
 import com.dicoding.tasklist.db.AppDatabase
 import com.dicoding.tasklist.db.TodoModel
+import com.dicoding.tasklist.viewmodel.TodoViewModel
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,10 +22,12 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val DB_NAME = "todo.db"
+//const val DB_NAME = "todo.db"
 
 class TaskActivity : AppCompatActivity(), View.OnClickListener {
-
+    private lateinit var getTitle: String
+    private lateinit var getCategory: String
+    private lateinit var getDescription: String
     lateinit var myCalendar: Calendar
 
     lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
@@ -31,9 +35,10 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
 
     var finalDate = 0L
     var finalTime = 0L
+    private lateinit var viewModel: TodoViewModel
 
 
-    private val labels = arrayListOf("Sawit", "Kelapa", "Mangga", "Durian", "Karet")
+    private val labels = arrayListOf("Santoso", "Usman", "ali", "diki", "sukijo")
 
 
     val db by lazy {
@@ -47,6 +52,7 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
         dateEdt.setOnClickListener(this)
         timeEdt.setOnClickListener(this)
         saveBtn.setOnClickListener(this)
+        viewModel = TodoViewModel()
 
 
         setUpSpinner()
@@ -71,30 +77,37 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.saveBtn -> {
                 saveTodo()
+                if (getTitle.isNotEmpty()) {
+                    viewModel.insertTask(
+                        applicationContext,
+                        TodoModel(getTitle, getCategory, getDescription, finalDate, finalTime)
+                    )
+
+                }
             }
         }
 
     }
 
     private fun saveTodo() {
-        val category = spinnerCategory.selectedItem.toString()
-        val title = titleInpLay.editText?.text.toString()
-        val description = taskInpLay.editText?.text.toString()
+        getCategory = spinnerCategory.selectedItem.toString()
+        getTitle = titleInpLay.editText?.text.toString()
+        getDescription = taskInpLay.editText?.text.toString()
 
-        GlobalScope.launch(Dispatchers.Main) {
-            val id = withContext(Dispatchers.IO) {
-                return@withContext db.todoDao().insertTask(
-                    TodoModel(
-                        title,
-                        description,
-                        category,
-                        finalDate,
-                        finalTime
-                    )
-                )
-            }
-            finish()
-        }
+//        GlobalScope.launch(Dispatchers.Main) {
+//            val id = withContext(Dispatchers.IO) {
+//                return@withContext db.todoDao().insertTask(
+//                    TodoModel(
+//                        title,
+//                        description,
+//                        category,
+//                        finalDate,
+//                        finalTime
+//                    )
+//                )
+//            }
+//            finish()
+//        }
 
     }
 
@@ -144,8 +157,9 @@ class TaskActivity : AppCompatActivity(), View.OnClickListener {
         datePickerDialog.show()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun updateDate() {
-        //Mon, 5 Jan 2020
+        //Monday, 20-06-2022
         val myformat = "EEE, d MMM yyyy"
         val sdf = SimpleDateFormat(myformat)
         finalDate = myCalendar.time.time

@@ -1,14 +1,16 @@
 package com.dicoding.tasklist.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.*
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,41 +18,49 @@ import com.dicoding.tasklist.R
 import com.dicoding.tasklist.adapter.TodoAdapter
 import com.dicoding.tasklist.db.AppDatabase
 import com.dicoding.tasklist.db.TodoModel
+import com.dicoding.tasklist.viewmodel.TodoViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var viewModel: TodoViewModel
     val list = arrayListOf<TodoModel>()
-    var adapter = TodoAdapter(list)
+    var adapterList = TodoAdapter(list)
 
     val db by lazy {
         AppDatabase.getDatabase(this)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         todoRv.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = this@MainActivity.adapter
+            adapter = this@MainActivity.adapterList
         }
 
         initSwipe()
-
-        db.todoDao().getTask().observe(this, Observer {
-            if (!it.isNullOrEmpty()) {
-                list.clear()
-                list.addAll(it)
-                adapter.notifyDataSetChanged()
-            } else {
-                list.clear()
-                adapter.notifyDataSetChanged()
-            }
+        viewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
+        viewModel.getListTask(this)?.observe(this, Observer {
+            list.clear()
+            list.addAll(it)
+            adapterList.notifyDataSetChanged()
         })
+
+//        db.todoDao().getTask().observe(this, Observer {
+//            if (!it.isNullOrEmpty()) {
+//                list.clear()
+//                list.addAll(it)
+//                adapter.notifyDataSetChanged()
+//            } else {
+//                list.clear()
+//                adapter.notifyDataSetChanged()
+//            }
+//        })
 
 
     }
@@ -66,18 +76,27 @@ class MainActivity : AppCompatActivity() {
                 target: RecyclerView.ViewHolder
             ): Boolean = false
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-
+                val task = list[position]
                 if (direction == ItemTouchHelper.LEFT) {
-                    GlobalScope.launch(Dispatchers.IO) {
-                        db.todoDao().deleteTask(adapter.getItemId(position))
-                    }
+                    viewModel.deleteTask(this@MainActivity,task)
+                    adapterList.notifyDataSetChanged()
                 } else if (direction == ItemTouchHelper.RIGHT) {
-                    GlobalScope.launch(Dispatchers.IO) {
-                        db.todoDao().finishTask(adapter.getItemId(position))
-                    }
+                    viewModel.deleteTask(this@MainActivity,task)
+                    adapterList.notifyDataSetChanged()
                 }
+//                if (direction == ItemTouchHelper.LEFT) {
+//                    GlobalScope.launch(Dispatchers.IO) {
+//                        db.todoDao().deleteTask(adapterList.getItemId(position))
+//                    }
+//                } else if (direction == ItemTouchHelper.RIGHT) {
+//                    GlobalScope.launch(Dispatchers.IO) {
+//                        db.todoDao().finishTask(adapterList.getItemId(position))
+//                    }
+//                }
+
             }
 
             override fun onChildDraw(
@@ -193,10 +212,10 @@ class MainActivity : AppCompatActivity() {
                 list.clear()
                 list.addAll(
                     it.filter { todo ->
-                        todo.title.contains(newText, true)
+                        todo.namaBarang.contains(newText, true)
                     }
                 )
-                adapter.notifyDataSetChanged()
+                adapterList.notifyDataSetChanged()
             }
         })
     }

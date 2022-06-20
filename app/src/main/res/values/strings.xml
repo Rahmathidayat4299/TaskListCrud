@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">TaskList</string>
     <string name="set_time">set_time</string>
-    <string name="task_title">task_title</string>
-    <string name="enter_task_title">enter_task_title</string>
+    <string name="task_title">Nama Barang</string>
+    <string name="enter_task_title">Masukkan nama barang</string>
     <string name="todo">TODO</string>
+    <string name="set_date">Set Date</string>
+    <string name="setting_tanggal">Setting Tanggal</string>
+    <string name="masukkan_jumlah_barang">Masukkan Jumlah Barang</string>
+    <string name="jumlah_barang">Jumlah Barang</string>
+    <string name="save">Save</string>
 </resources>
