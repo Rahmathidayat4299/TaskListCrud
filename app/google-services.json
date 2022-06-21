@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1092077423219",
+    "project_id": "tasklist-35629",
+    "storage_bucket": "tasklist-35629.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092077423219:android:a158db48d9d936cc3a7806",
+        "android_client_info": {
+          "package_name": "com.dicoding.tasklist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092077423219-rgb6506caelhkftlkfr459h9eamkvof0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp4SXvubr6acfep2iydEtvJiORBI_Np28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092077423219-rgb6506caelhkftlkfr459h9eamkvof0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
