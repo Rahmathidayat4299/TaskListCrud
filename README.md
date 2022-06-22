@@ -1,6 +1,7 @@
 # TaskListCrud
 answer task binar engineering
 1.RelativeLayout
+<br/>
 2.AndroidManifest.xml
 3.:A.onCreate() -> A.onPause() -> A.onResume() -> B.onStart() -> A.onPause()
 
