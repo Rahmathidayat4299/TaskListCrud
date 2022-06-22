@@ -22,5 +22,5 @@ git config --global user.email "hrahmat950@gmail.com"
   <br/>
 10.Log.d("BINAR",msg "habis dibagi 3 dan 5")
   <br/>
-11.https://github.com/Rahmathidayat4299/TaskListCrud.git
+11.https://github.com/Rahmathidayat4299/TaskList.git
   
